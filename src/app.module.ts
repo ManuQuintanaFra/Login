@@ -6,6 +6,7 @@ import { rateLimiterMiddleware } from './middlewares/rate-limiter.middleware'; /
 import { AuthController } from './auth/auth.controller'; // Importa AuthController para aplicar middleware a rutas específicas.
 import { ConfigModule } from '@nestjs/config'; // Importa el módulo de configuración para variables de entorno.
 import { CloudinaryModule } from './cloudinary/cloudinary.module'; // Importa el módulo de Cloudinary.
+import { LoggerMiddleware } from './middlewares/logger.middleware'; // Importa el middleware de logs personalizado.
 
 @Module({
   imports: [
@@ -29,6 +30,9 @@ export class AppModule implements NestModule {
   // El método 'configure' es requerido por NestModule. Se usa para aplicar middlewares.
   configure(consumer: MiddlewareConsumer) {
     // MiddlewareConsumer es un helper para configurar middlewares.
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes('*');
     consumer
       .apply(rateLimiterMiddleware) // Aplica el middleware importado.
       .forRoutes({ path: 'auth/login', method: RequestMethod.POST }); // Aplica el middleware específicamente a la ruta POST /auth/login.
